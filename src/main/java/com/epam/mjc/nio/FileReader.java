@@ -1,6 +1,7 @@
 package com.epam.mjc.nio;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
@@ -12,7 +13,8 @@ public class FileReader {
 
     public Profile getDataFromFile(File file) {
         Profile profile = new Profile();
-        try {
+        try (FileInputStream fileInputStream = new FileInputStream(file)){
+            fileInputStream.close();
             List<String> strings = Files.readAllLines(file.toPath());
             profile.setName(strings.get(0).substring(strings.get(0).indexOf(':') + 2));
             String age = strings.get(1).substring(strings.get(1).indexOf(':') + 2);
