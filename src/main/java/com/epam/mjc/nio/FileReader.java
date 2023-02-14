@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,16 +12,23 @@ public class FileReader {
 
     public Profile getDataFromFile(File file) {
         Profile profile = new Profile();
-        try (FileInputStream fileInputStream = new FileInputStream(file)){
-            fileInputStream.close();
-            List<String> strings = Files.readAllLines(file.toPath());
-            profile.setName(strings.get(0).substring(strings.get(0).indexOf(':') + 2));
-            String age = strings.get(1).substring(strings.get(1).indexOf(':') + 2);
+        String str = "";
+        try (FileInputStream in = new FileInputStream(file)){
+            if(!Files.exists(file.toPath())) {
+                throw new IOException("File not found");
+            }
+            int c;
+            while ((c = in.read()) != -1) {
+                str = str.concat(Character.toString(c));
+            }
+            String[] strings = str.split("\n");
+            profile.setName(strings[0].substring(strings[0].indexOf(':') + 2));
+            String age = strings[1].substring(strings[1].indexOf(':') + 2);
             if (!age.equals("")) {
                 profile.setAge(Integer.parseInt(age));
             }
-            profile.setEmail(strings.get(2).substring(strings.get(2).indexOf(':') + 2));
-            String phone = strings.get(3).substring(strings.get(3).indexOf(':') + 2);
+            profile.setEmail(strings[2].substring(strings[2].indexOf(':') + 2));
+            String phone = strings[3].substring(strings[3].indexOf(':') + 2);
             if (!phone.equals("")) {
                 profile.setPhone(Long.parseLong(phone));
             }
